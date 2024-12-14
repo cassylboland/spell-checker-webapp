@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spell Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        async function checkWord() {
+            const word = document.getElementById('wordInput').value;
+            const response = await fetch('/check', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word })
+            });
+            const data = await response.json();
+            document.getElementById('result').innerText = data.message;
+            const suggestions = data.suggestions;
+            const suggestionList = document.getElementById('suggestions');
+            suggestionList.innerHTML = '';
+            suggestions.forEach(suggestion => {
+                const li = document.createElement('li');
+                li.textContent = suggestion;
+                suggestionList.appendChild(li);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Spell Checker</h1>
+    <input type="text" id="wordInput" placeholder="Enter a word">
+    <button onclick="checkWord()">Check</button>
+    <p id="result"></p>
+    <ul id="suggestions"></ul>
+</body>
+</html>
